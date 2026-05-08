@@ -30,8 +30,15 @@ client = OpenAI(api_key=api_key)
 MODEL = "gpt-4.1"
 
 # Render visible app content
-st.title("Mini Rubber Ducky 🦆")
-st.write("👋 Welcome to Mini Rubber Ducky baby!")
+st.html(
+    """
+    <h1 style="text-align: center;">Mini Rubber Ducky 🦆</h1>
+    <p style="text-align: center;">
+        Welcome aboard. I’m Mini Rubber Ducky, your tiny RAG coach.
+        Ask me about retrieval, embeddings, vector stores, or why your context window is crying.
+    </p>
+    """
+)
 
 # Initialize session state for conversation history
 if "messages" not in st.session_state:
@@ -63,10 +70,16 @@ def load_vector_store():
 
 
 # Define the initial message
-INITIAL_MESSAGE = """🦆 Hi! I am Mini Rubber Ducky, your friendly assistant.
-How can I help you today?
-I can help you in many modes
+INITIAL_MESSAGE = """Quack checkpoint: I’m Mini Rubber Ducky, your tiny coach for RAG concepts, especially multimodal RAG.
+Ask me how retrieval works, why embeddings are weirdly useful, how vector stores keep things findable, or how text, images, audio, and video can all show up to the same RAG party.
 """
+
+# Define clickable prompt suggestions
+PROMPT_SUGGESTIONS = [
+    "Explain RAG like I’m holding a rubber duck",
+    "How do embeddings and vector stores work together?",
+    "What makes multimodal RAG different from text-only RAG?",
+]
 
 # Define instructions
 INSTRUCTIONS = """You are Mini Rubber Ducky, the course assistant for a multimodal RAG assistant course.
@@ -179,8 +192,17 @@ def main():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+    selected_prompt = None
+    prompt_columns = st.columns(3)
+    for column, suggestion in zip(prompt_columns, PROMPT_SUGGESTIONS):
+        with column:
+            if st.button(suggestion, use_container_width=True):
+                selected_prompt = suggestion
+
     # Chat Input
-    prompt = st.chat_input("💬 Ask me anything about multimodal RAG")
+    prompt = selected_prompt or st.chat_input(
+        "Ask me about RAG concepts, retrieval, embeddings, or multimodal pipelines"
+    )
     if prompt:
         st.session_state.messages.append(
             {"role": "user", "content": prompt})
